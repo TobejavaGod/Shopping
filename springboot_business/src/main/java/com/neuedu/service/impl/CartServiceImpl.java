@@ -77,6 +77,24 @@ public class CartServiceImpl implements ICartService {
         return ServerResponse.serverResponseBySuccess(cartVO);
     }
 
+    @Override
+    public ServerResponse findCartsByIdAndChecked(Integer userId) {
+        List<Cart> cartList = cartMapper.findCartsByIdAndChecked(userId);
+        return ServerResponse.serverResponseBySuccess(cartList);
+    }
+
+    @Override
+    public ServerResponse deleteBatch(List<Cart> cartList) {
+        if(cartList==null || cartList.size()==0){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"要删除的购物车商品不能为空");
+        }
+        int result = cartMapper.deleteBatch(cartList);
+        if(result!=cartList.size()){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"购物车清空失败");
+        }
+        return ServerResponse.serverResponseBySuccess();
+    }
+
     private CartVO getCartVO(Integer userId){
         CartVO cartVO = new CartVO();
         // 根据userId查询用户的购物信息

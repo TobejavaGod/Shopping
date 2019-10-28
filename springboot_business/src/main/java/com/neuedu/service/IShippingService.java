@@ -14,4 +14,6 @@ public interface IShippingService {
      * @return
      */
     ServerResponse add(Shipping shipping);
+
+    ServerResponse findShippingById(Integer shippingId);
 }

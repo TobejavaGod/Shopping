@@ -56,7 +56,19 @@ public interface ProductMapper {
     int updateStatusById(@Param("productId") Integer productId, @Param("status") Integer status);
 
 
+    /**
+     * 根据商品名和商品编号查询
+     * @param productName 模糊查询
+     * @param productId
+     * @return
+     */
     List<Product> selectProductsByNameAndId(@Param("productName")String productName,@Param("productId")Integer productId);
 
-
+    /**
+     * 扣库存
+     * @param productId
+     * @param stock
+     * @return
+     */
+    int reduceProductStock(@Param("productId") Integer productId,@Param("stock") Integer stock);
 }

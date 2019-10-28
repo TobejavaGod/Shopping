@@ -43,4 +43,16 @@ public class ShippingServiceImpl implements IShippingService {
             }
         }
     }
+
+    @Override
+    public ServerResponse findShippingById(Integer shippingId) {
+        if(shippingId==null){
+            return ServerResponse.serverResponseByError(ResponseCode.PARAM_NOT_NULL,"参数不能为空");
+        }
+        Shipping shipping = shippingMapper.selectByPrimaryKey(shippingId);
+        if(shipping==null){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"收货地址不存在");
+        }
+        return ServerResponse.serverResponseBySuccess(shipping);
+    }
 }

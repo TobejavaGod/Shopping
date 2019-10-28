@@ -2,6 +2,7 @@ package com.neuedu.service;
 
 import com.neuedu.common.ServerResponse;
 import com.neuedu.pojo.Product;
+import com.neuedu.vo.ProductDetailVO;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpSession;
@@ -43,7 +44,9 @@ public interface IProductService {
      * @param productId
      * @return
      */
-    ServerResponse detail(Integer productId);
+    ServerResponse<ProductDetailVO> detail(Integer productId);
+
+    ServerResponse<Product> findProductByProductId(Integer productId);
 
     /**
      * 根据id查询商品的库存信息
@@ -51,4 +54,9 @@ public interface IProductService {
      * @return
      */
     ServerResponse<Product> findProductById(Integer productId);
+
+    /**
+     * 扣库存
+     */
+    ServerResponse reduceProductStock(Integer productId, Integer stock);
 };

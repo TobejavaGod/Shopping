@@ -8,6 +8,7 @@ import com.neuedu.common.ResponseCode;
 import com.neuedu.common.ServerResponse;
 import com.neuedu.dao.ProductMapper;
 import com.neuedu.pojo.Category;
+import com.neuedu.pojo.OrderItem;
 import com.neuedu.pojo.Product;
 import com.neuedu.service.ICategoryService;
 import com.neuedu.service.IProductService;
@@ -108,7 +109,7 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public ServerResponse detail(Integer productId) {
+    public ServerResponse<ProductDetailVO> detail(Integer productId) {
         if(productId==null){
             ServerResponse.serverResponseByError(ResponseCode.ERROR,"商品id不能为空");
         }
@@ -118,6 +119,18 @@ public class ProductServiceImpl implements IProductService {
         }
         ProductDetailVO productDetailVO = assembleProductDetailVO(product);
         return ServerResponse.serverResponseBySuccess(productDetailVO);
+    }
+
+    @Override
+    public ServerResponse<Product> findProductByProductId(Integer productId) {
+        if(productId==null){
+            ServerResponse.serverResponseByError(ResponseCode.ERROR,"商品id不能为空");
+        }
+        Product product = productMapper.selectByPrimaryKey(productId);
+        if(product==null){
+            return ServerResponse.serverResponseBySuccess();
+        }
+        return ServerResponse.serverResponseBySuccess(product);
     }
 
     @Override
@@ -132,6 +145,23 @@ public class ProductServiceImpl implements IProductService {
         }
         return ServerResponse.serverResponseBySuccess(product);
     }
+
+    @Override
+    public ServerResponse reduceProductStock(Integer productId, Integer stock) {
+        if(productId==null){
+            return ServerResponse.serverResponseByError(ResponseCode.PARAM_NOT_NULL,"参数不能为空");
+        }
+        if(stock==null){
+            return ServerResponse.serverResponseByError(ResponseCode.PARAM_NOT_NULL,"参数不能为空");
+        }
+        int result = productMapper.reduceProductStock(productId, stock);
+        if(result<=0){
+            ServerResponse.serverResponseByError(ResponseCode.ERROR,"扣库存失败");
+        }
+        return ServerResponse.serverResponseBySuccess();
+    }
+
+
 
     /**
      * 将product的pojo转为vo

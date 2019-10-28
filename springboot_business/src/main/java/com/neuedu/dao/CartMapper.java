@@ -65,4 +65,15 @@ public interface CartMapper {
      * 统计购物车中未选中商品的数量
      */
     Integer findAllUncheckedProduct(@Param("userId") Integer userId);
+
+    /**
+     * 根据用户id查询用户购物车中已勾选的商品
+     */
+    List<Cart> findCartsByIdAndChecked(@Param("userId") Integer userId);
+
+    /**
+     * 批量删除购物车中已选中的商品
+     */
+    int deleteBatch(@Param("cartList") List<Cart> cartList);
+
 }
