@@ -87,6 +87,12 @@ public class UserController {
         return userService.forget_reset_password(username, newpassword, forgettoken);
     }
 
+    /**
+     * 查询用户信息 -> 已登录
+     * @param user
+     * @param session
+     * @return
+     */
     @RequestMapping("/update_information.do")
     public ServerResponse update_information(User user,HttpSession session){
         User loginUser = (User)session.getAttribute(Const.CURRENT_USER);
@@ -96,5 +102,53 @@ public class UserController {
         user.setId(loginUser.getId());
         return userService.update_information(user);
 
+    }
+
+    /**
+     * 检查用户名是否有效
+     */
+    @RequestMapping("/check_valid.do")
+    public ServerResponse check_valid(String str,String type){
+        return userService.check_valid(str, type);
+    }
+
+    /**
+     * 获取登陆用户信息
+     */
+    @RequestMapping("/get_user_info.do")
+    public ServerResponse get_user_info(HttpSession session){
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if(user==null){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"用户未登录,无法获取当前用户信息");
+        }
+        return userService.get_user_info(user.getUsername());
+    }
+
+    /**
+     * 登陆状态下重置密码
+     */
+    @RequestMapping("/reset_password.do")
+    public ServerResponse reset_password(String oldPassword,String newPassword,HttpSession session){
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        return userService.reset_password(oldPassword,newPassword,user.getId());
+    }
+
+    /**
+     * 获取登录状态下的用户的详细信息
+     * @return
+     */
+    @RequestMapping("/get_information.do")
+    public ServerResponse get_information(HttpSession session){
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        return userService.get_information(user.getId());
+    }
+
+    /**
+     * 退出登陆
+     */
+    @RequestMapping("/logout.do")
+    public ServerResponse logout(HttpSession session){
+        session.removeAttribute(Const.CURRENT_USER);
+        return ServerResponse.serverResponseBySuccess("退出成功");
     }
 }

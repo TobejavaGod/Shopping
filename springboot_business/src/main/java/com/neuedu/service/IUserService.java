@@ -3,6 +3,7 @@ package com.neuedu.service;
 import com.neuedu.common.ServerResponse;
 import com.neuedu.pojo.User;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 /**
@@ -58,4 +59,43 @@ public interface IUserService {
      * @return
      */
     ServerResponse update_information(User user);
+
+
+    /**
+     * 检查用户名是否有效
+     * @param str
+     * @param type
+     * @return
+     */
+    ServerResponse check_valid(String str,String  type);
+
+    /**
+     * 获取登陆用户的信息
+     * @return
+     */
+    ServerResponse get_user_info(String username);
+
+    /**
+     * 登陆状态下修改密码
+     * @param oldPassword
+     * @param newPassword
+     * @return
+     */
+    ServerResponse reset_password(String oldPassword,String newPassword,Integer userId);
+
+    /**
+     * 获取详细信息
+     * @param userId
+     * @return
+     */
+    ServerResponse get_information(Integer userId);
+
+
+    /**
+     * 列出所有用户 -> 分页
+     * @param pageSize
+     * @param pageNum
+     * @return
+     */
+    ServerResponse listUsers(Integer pageSize,  Integer pageNum,int role);
 }

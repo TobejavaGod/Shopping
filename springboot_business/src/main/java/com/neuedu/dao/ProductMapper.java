@@ -71,4 +71,19 @@ public interface ProductMapper {
      * @return
      */
     int reduceProductStock(@Param("productId") Integer productId,@Param("stock") Integer stock);
+
+    /**
+     * 用户查询商品
+     * @param productId
+     * @return
+     */
+    Product findProductForUser(@Param("productId") Integer productId);
+
+    /**
+     * 商品列表for用户
+     * @param category
+     * @param orderBy
+     * @return
+     */
+    List<Product> findProductsByCategoryForUser(@Param("categoryId") Integer categoryId,@Param("orderBy") String orderBy);
 }

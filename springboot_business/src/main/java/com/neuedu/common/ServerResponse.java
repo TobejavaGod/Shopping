@@ -35,7 +35,13 @@ public class ServerResponse<T> {
      * 调用接口成功时的回调函数
      */
     public  static ServerResponse serverResponseBySuccess(){
+
         return new ServerResponse(ResponseCode.SUCCESS);
+    }
+
+    public  static ServerResponse serverResponseBySuccess(String msg){
+
+        return new ServerResponse(ResponseCode.SUCCESS,msg);
     }
     public static <T>ServerResponse serverResponseBySuccess(T data){
         return new ServerResponse(ResponseCode.SUCCESS,data);

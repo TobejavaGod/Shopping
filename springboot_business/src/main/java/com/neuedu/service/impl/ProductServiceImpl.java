@@ -161,6 +161,52 @@ public class ProductServiceImpl implements IProductService {
         return ServerResponse.serverResponseBySuccess();
     }
 
+    @Override
+    public ServerResponse productDetailForUser(Integer productId) {
+        // 参数非空校验
+        if(productId==null){
+            return ServerResponse.serverResponseByError(ResponseCode.PARAM_NOT_NULL,"参数不能为空");
+        }
+        Product product = productMapper.findProductForUser(productId);
+        if(product==null){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"商品不存在或已下架");
+        }
+        return ServerResponse.serverResponseBySuccess(product);
+    }
+
+    /**
+     * 用户按类别查询商品
+     * @param categoryId
+     * @param pageNum
+     * @param pageSize
+     * @param orderBy price_asc  price_desc
+     * @return
+     */
+    @Override
+    public ServerResponse listProductsForUser(Integer categoryId, Integer pageNum, Integer pageSize, String orderBy) {
+        // 参数非空校验
+        if(categoryId==null){
+            return ServerResponse.serverResponseByError(ResponseCode.PARAM_NOT_NULL,"参数不能为空");
+        }
+        // orderBy属性分割
+        String[] strings = orderBy.split("_");
+        if(strings.length!=2){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"排序参数格式错误");
+        }
+        String order = strings[1];
+        Page page = PageHelper.startPage(pageNum,pageSize);
+        List<Product> productList = productMapper.findProductsByCategoryForUser(categoryId, order);
+        if(productList==null || productList.size()<=0){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"查询失败");
+        }
+        List<ProductListVO> productListVOList = Lists.newArrayList();
+        for (Product product:productList){
+            ProductListVO productListVO = assembleProductListVO(product);
+            productListVOList.add(productListVO);
+        }
+        PageInfo pageInfo = new PageInfo(productListVOList);
+        return ServerResponse.serverResponseBySuccess(pageInfo);
+    }
 
 
     /**

@@ -59,4 +59,22 @@ public interface IProductService {
      * 扣库存
      */
     ServerResponse reduceProductStock(Integer productId, Integer stock);
+
+
+    /**
+     * 用户查询商品细节
+     * @param productId
+     * @return
+     */
+    ServerResponse productDetailForUser(Integer productId);
+
+    /**
+     * 用户查看商品列表 -> 排序
+     * @param categoryId
+     * @param pageNum
+     * @param pageSize
+     * @param orderBy price_asc  price_desc
+     * @return
+     */
+    ServerResponse listProductsForUser(Integer categoryId,Integer pageNum,Integer pageSize,String orderBy);
 };

@@ -22,7 +22,6 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(Const.CURRENT_USER);
-        System.out.println("拦截器执行了");
         if(user==null){
             return false;
         }else{

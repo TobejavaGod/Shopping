@@ -76,4 +76,26 @@ public interface CartMapper {
      */
     int deleteBatch(@Param("cartList") List<Cart> cartList);
 
+    /**
+     * 更新购物车中某商品的数量
+     */
+    int updateProductByProductId(@Param("productId") Integer productId,@Param("userId") Integer userId,@Param("count")Integer count);
+
+
+    int deleteProducts(@Param("list") List<Integer> productIdList);
+
+    /**
+     * 选中商品
+     * @param productId
+     * @return
+     */
+    int selectProduct(@Param("productId") Integer productId,@Param("userId") Integer userId);
+
+    /**
+     * 取消选中
+     * @param productId
+     * @param userId
+     * @return
+     */
+    int unSelectProduct(@Param("productId") Integer productId,@Param("userId") Integer userId);
 }

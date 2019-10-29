@@ -1,10 +1,13 @@
 package com.neuedu.config;
 
+import com.google.common.collect.Lists;
 import com.neuedu.interceptor.LoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 /**
  * @author jyw
@@ -18,6 +21,22 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loginInterceptor).addPathPatterns("/**").excludePathPatterns("/user/register","/user/login/**","manager/login/*");
+        List<String> addPatterns = Lists.newArrayList();
+        addPatterns.add("/user/**");
+        addPatterns.add("/cart/**");
+        addPatterns.add("/order/**");
+        addPatterns.add("/shipping/**");
+
+        List<String> excludePathPatterns = Lists.newArrayList();
+        excludePathPatterns.add("/user/register");
+        excludePathPatterns.add("/user/login/**");
+        excludePathPatterns.add("/user/forget_get_question/**");
+        excludePathPatterns.add("/user/forget_check_answer.do");
+        excludePathPatterns.add("/user/forget_reset_password.do");
+        excludePathPatterns.add("/order/callback.do");
+
+
+        registry.addInterceptor(loginInterceptor).addPathPatterns(addPatterns)
+                .excludePathPatterns(excludePathPatterns);
     }
 }

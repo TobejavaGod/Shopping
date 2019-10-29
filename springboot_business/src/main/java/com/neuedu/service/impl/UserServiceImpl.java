@@ -1,5 +1,8 @@
 package com.neuedu.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.neuedu.common.ResponseCode;
 import com.neuedu.common.RoleEnum;
 import com.neuedu.common.ServerResponse;
@@ -8,9 +11,11 @@ import com.neuedu.pojo.User;
 import com.neuedu.service.IUserService;
 import com.neuedu.util.MD5Utils;
 import com.neuedu.util.TokenCache;
+import com.neuedu.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -161,5 +166,93 @@ public class UserServiceImpl implements IUserService {
             return ServerResponse.serverResponseByError(ResponseCode.ERROR,"修改失败");
         }
         return ServerResponse.serverResponseBySuccess();
+    }
+
+    @Override
+    public ServerResponse check_valid(String str, String type) {
+        // 参数非空校验
+        if(str==null||"".equals(str)){
+            return ServerResponse.serverResponseByError(ResponseCode.PARAM_NOT_NULL,"参数不能为空");
+        }
+        if(type==null||"".equals(type)){
+            return ServerResponse.serverResponseByError(ResponseCode.PARAM_NOT_NULL,"参数不能为空");
+        }
+        if(type.equals("username")){
+            // 检查用户名是否存在
+            int resultUser = userMapper.isExistUsername(str);
+            if(resultUser!=0){
+                return ServerResponse.serverResponseByError(ResponseCode.ERROR,"用户名已存在");
+            }
+        }
+        if(type.equals("email")){
+            // 检查邮箱是否存在
+            int resultEmail = userMapper.isExistEmail(str);
+            if(resultEmail!=0){
+                return ServerResponse.serverResponseByError(ResponseCode.ERROR,"邮箱已存在");
+            }
+        }
+        return ServerResponse.serverResponseBySuccess("校验成功");
+    }
+
+    @Override
+    public ServerResponse get_user_info(String  username) {
+        User user = userMapper.findUserByUsername(username);
+        if(user==null){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"查询失败");
+        }
+        UserVO userVO = new UserVO();
+        userVO.setId(user.getId());
+        userVO.setUsername(username);
+        userVO.setEmail(user.getEmail());
+        userVO.setPhone(user.getPhone());
+        userVO.setCreateTime(user.getCreateTime());
+        userVO.setUpdateTime(user.getUpdateTime());
+        return ServerResponse.serverResponseBySuccess(userVO);
+    }
+
+    @Override
+    public ServerResponse reset_password(String oldPassword, String newPassword,Integer userId) {
+        // 参数非空判断
+        if(oldPassword==null||"".equals(oldPassword)){
+            return ServerResponse.serverResponseByError(ResponseCode.PARAM_NOT_NULL,"参数不能为空");
+        }
+        if(newPassword==null||"".equals(newPassword)){
+            return ServerResponse.serverResponseByError(ResponseCode.PARAM_NOT_NULL,"参数不能为空");
+        }
+        User user = userMapper.selectByPrimaryKey(userId);
+        if(!MD5Utils.getMD5Code(oldPassword).equals(user.getPassword())){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"旧密码输入有误");
+        }
+        int result = userMapper.resetPasswordById(userId, MD5Utils.getMD5Code(newPassword));
+        if(result<=0){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"修改失败");
+        }
+        return ServerResponse.serverResponseBySuccess("修改密码成功");
+    }
+
+    /**
+     * 获取当前用户的详细信息
+     * @param userId
+     * @return
+     */
+    @Override
+    public ServerResponse get_information(Integer userId) {
+        User user = userMapper.selectByPrimaryKey(userId);
+        user.setPassword(null);
+        return ServerResponse.serverResponseBySuccess(user);
+    }
+
+    @Override
+    public ServerResponse listUsers(Integer pageSize, Integer pageNum,int role) {
+        if(role==RoleEnum.ROLE_USER.getRole()){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"权限不足");
+        }
+        Page page = PageHelper.startPage(pageNum,pageSize);
+        List<User> users = userMapper.selectAll();
+        if(users==null||users.size()<=0){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"查询失败");
+        }
+        PageInfo pageInfo = new PageInfo(users);
+        return ServerResponse.serverResponseBySuccess(pageInfo);
     }
 }

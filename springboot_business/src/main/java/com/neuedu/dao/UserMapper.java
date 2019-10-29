@@ -101,4 +101,8 @@ public interface UserMapper {
      * @return
      */
     int updateUserByActivate(@Param("user") User user);
+
+    User findUserByUsername(@Param("username") String username);
+
+    int resetPasswordById(@Param("userId") Integer userId,@Param("password") String password);
 }

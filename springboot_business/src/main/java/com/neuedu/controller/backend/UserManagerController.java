@@ -1,12 +1,15 @@
 package com.neuedu.controller.backend;
 
+import com.neuedu.common.ResponseCode;
 import com.neuedu.common.RoleEnum;
 import com.neuedu.common.ServerResponse;
+import com.neuedu.pojo.User;
 import com.neuedu.service.IUserService;
 import com.neuedu.util.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
@@ -33,5 +36,16 @@ public class UserManagerController {
             session.setAttribute(Const.CURRENT_USER,serverResponse.getData());
         }
         return serverResponse;
+    }
+
+    @RequestMapping("user/list.do")
+    public ServerResponse listUsers(@RequestParam(value = "pageSize",defaultValue = "10") Integer pageSize,
+                                    @RequestParam(value = "pageNum",defaultValue = "1") Integer pageNum,
+                                    HttpSession session){
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if(user==null){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"未登录");
+        }
+        return userService.listUsers(pageSize,pageNum,user.getRole());
     }
 }

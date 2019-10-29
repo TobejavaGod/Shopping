@@ -95,6 +95,83 @@ public class CartServiceImpl implements ICartService {
         return ServerResponse.serverResponseBySuccess();
     }
 
+    @Override
+    public ServerResponse listCarts(Integer userId) {
+        CartVO cartVO = getCartVO(userId);
+        if(cartVO==null){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"购物车中无商品");
+        }
+        return ServerResponse.serverResponseBySuccess(cartVO);
+    }
+
+    @Override
+    public ServerResponse updateCarts(Integer productId, Integer userId, Integer count) {
+        // 参数非空校验
+        if(productId==null){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"商品id不能为空");
+        }
+        if(count==null){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"添加商品数量不能为空");
+        }
+        int result = cartMapper.updateProductByProductId(productId, userId, count);
+        if(result<=0){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR, "更新失败");
+        }
+        CartVO cartVO = getCartVO(userId);
+        if(cartVO==null){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"vo转换失败");
+        }
+        return ServerResponse.serverResponseBySuccess(cartVO);
+    }
+
+    @Override
+    public ServerResponse delete_product(String productIds) {
+        // 参数非空校验
+        if(productIds==null){
+            return ServerResponse.serverResponseByError(ResponseCode.PARAM_NOT_NULL,"参数不能为空");
+        }
+        // 分解参数
+        String[] productArr = productIds.split(",");
+        List<Integer> productList = Lists.newArrayList();
+        for(String productId : productArr){
+            productList.add(Integer.parseInt(productId));
+        }
+        if(productList==null || productList.size()<=0){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"参数传递有误");
+        }
+        int result = cartMapper.deleteProducts(productList);
+        if(result!=productList.size()){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"删除失败");
+        }
+        return ServerResponse.serverResponseBySuccess();
+    }
+
+    @Override
+    public ServerResponse select_product(Integer productId,Integer userId) {
+        // 参数非空校验
+        if(productId==null){
+            return ServerResponse.serverResponseByError(ResponseCode.PARAM_NOT_NULL,"参数不能为空");
+        }
+        int result = cartMapper.selectProduct(productId, userId);
+        if(result<=0){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"更新出现错误");
+        }
+        return ServerResponse.serverResponseBySuccess();
+    }
+
+    @Override
+    public ServerResponse unSelect_product(Integer productId, Integer userId) {
+        // 参数非空校验
+        if(productId==null){
+            return ServerResponse.serverResponseByError(ResponseCode.PARAM_NOT_NULL,"参数不能为空");
+        }
+        int result = cartMapper.unSelectProduct(productId, userId);
+        if(result<=0){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"更新出现错误");
+        }
+        return ServerResponse.serverResponseBySuccess();
+    }
+
     private CartVO getCartVO(Integer userId){
         CartVO cartVO = new CartVO();
         // 根据userId查询用户的购物信息
