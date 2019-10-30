@@ -13,6 +13,9 @@ import com.alipay.demo.trade.service.impl.AlipayMonitorServiceImpl;
 import com.alipay.demo.trade.service.impl.AlipayTradeServiceImpl;
 import com.alipay.demo.trade.service.impl.AlipayTradeWithHBServiceImpl;
 import com.alipay.demo.trade.utils.ZxingUtils;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.neuedu.alipay.Main;
 import com.neuedu.common.*;
@@ -198,6 +201,95 @@ public class OrderServiceImpl implements IOrderService {
             return "fail";
         }
         return "success";
+    }
+
+    @Override
+    public ServerResponse cancelOrder(Long orderNo) {
+        if(orderNo==null){
+            return ServerResponse.serverResponseByError(ResponseCode.PARAM_NOT_NULL,"参数不能为空");
+        }
+        // 订单状态：0-已取消 10-未付款 20-已付款 40-已发货 50-交易成功 60-交易关闭'
+        // 更新订单状态为已取消
+        int result = orderMapper.updateOrderByOrderNo(orderNo);
+        if(result<=0){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"该用户没有此订单");
+        }
+        // 删除订单明细
+//      int resultItem = orderItemMapper.deleteOrderItemByOrderNo(orderNo);
+        return ServerResponse.serverResponseBySuccess();
+    }
+
+    @Override
+    public ServerResponse get_order_product(Integer userId) {
+        List<OrderItem> orderItemList = orderItemMapper.findOrderItemByUserId(userId);
+        if(orderItemList==null||orderItemList.size()<=0){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"订单明细为空");
+        }
+        List<OrderItemVO> orderItemVOList = Lists.newArrayList();
+        for (OrderItem orderItem : orderItemList){
+            OrderItemVO orderItemVO = assembleOrderItemVO(orderItem);
+            orderItemVOList.add(orderItemVO);
+        }
+        BigDecimal totalPrice = new BigDecimal("0");
+        for (OrderItemVO orderItemVO : orderItemVOList){
+            totalPrice = BigDecimalUtils.add(totalPrice.doubleValue(), orderItemVO.getTotalPrice().doubleValue());
+        }
+        OrderProductVO orderProductVO = new OrderProductVO();
+        orderProductVO.setOrderItemVOList(orderItemVOList);
+        orderProductVO.setImageHost(imageHost);
+        orderProductVO.setTotalPrice(totalPrice);
+        return ServerResponse.serverResponseBySuccess(orderProductVO);
+    }
+
+    @Override
+    public ServerResponse listOrders(Integer pageNum, Integer pageSize, Integer userId) {
+        Page page = PageHelper.startPage(pageNum,pageSize);
+        List<Order> orderList = orderMapper.findOrderByUserId(userId);
+        if(orderList==null||orderList.size()<=0){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"无订单信息");
+        }
+        List<OrderVO> orderVOList = Lists.newArrayList();
+        for (Order order : orderList){
+            List<OrderItem> orderItemList = orderItemMapper.findOrderItemByOrderNo(order.getOrderNo());
+            ServerResponse<OrderVO> serverResponse = assembleOrderVO(order, orderItemList, order.getShippingId());
+            OrderVO orderVO = serverResponse.getData();
+            orderVOList.add(orderVO);
+        }
+        PageInfo pageInfo = new PageInfo(orderVOList);
+        return ServerResponse.serverResponseBySuccess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse send_product(Long orderNo) {
+        if(orderNo==null){
+            return ServerResponse.serverResponseByError(ResponseCode.PARAM_NOT_NULL,"发货订单号不能为空");
+        }
+        Order order = orderMapper.findOrderByOrderNo(orderNo);
+        if(order==null){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"订单未找到");
+        }
+        Integer status = order.getStatus();
+        if(status==0){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"订单已取消");
+        }
+        if(status==10){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"订单未付款");
+        }
+        if(status==40){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"再发货就亏了");
+        }
+        if(status==50){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"交易已经成功了");
+        }
+        if(status==60){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"交易已关闭");
+        }
+        // 发货操作
+        int result = orderMapper.updateOrderStatusAndSendTimeByOrderNo(orderNo);
+        if(result<=0){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"发货失败");
+        }
+        return ServerResponse.serverResponseBySuccess("发货成功");
     }
 
 

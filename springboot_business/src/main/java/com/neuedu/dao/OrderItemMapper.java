@@ -56,4 +56,12 @@ public interface OrderItemMapper {
      * 根据订单号查询订单明细
      */
     List<OrderItem> findOrderItemByOrderNo(@Param("orderNo") Long orderNo);
+
+    /**
+     * 取消订单后删除订单明细
+     */
+    int deleteOrderItemByOrderNo(@Param("orderNo") Long orderNo);
+
+
+    List<OrderItem> findOrderItemByUserId(@Param("userId") Integer userId);
 }

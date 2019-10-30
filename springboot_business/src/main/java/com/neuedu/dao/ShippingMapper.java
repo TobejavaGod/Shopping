@@ -43,4 +43,8 @@ public interface ShippingMapper {
      * @mbg.generated
      */
     int updateByPrimaryKey(Shipping record);
+
+
+    List<Shipping> listShippingByUserId(Integer userId);
+
 }

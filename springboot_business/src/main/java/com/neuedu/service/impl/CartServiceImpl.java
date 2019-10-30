@@ -172,6 +172,38 @@ public class CartServiceImpl implements ICartService {
         return ServerResponse.serverResponseBySuccess();
     }
 
+    @Override
+    public ServerResponse select_allProduct(Integer userId) {
+        if(userId==null){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"用户id不能为空");
+        }
+        int result = cartMapper.selectAllProduct(userId);
+        CartVO cartVO = getCartVO(userId);
+        if(result==0){
+            if(cartVO.getCartProductVOList().size()==0){
+               return ServerResponse.serverResponseByError(ResponseCode.ERROR,"购物车中无商品");
+            }
+            return ServerResponse.serverResponseBySuccess(cartVO,"购物车中无未选中商品");
+        }
+        return ServerResponse.serverResponseBySuccess(cartVO);
+    }
+
+    @Override
+    public ServerResponse select_noneProduct(Integer userId){
+        if(userId==null){
+            return ServerResponse.serverResponseByError(ResponseCode.PARAM_NOT_NULL,"用户id不能为空");
+        }
+        int result = cartMapper.selectNoneProduct(userId);
+        CartVO cartVO = getCartVO(userId);
+        if(result==0){
+            if(cartVO.getCartProductVOList().size()==0){
+                return ServerResponse.serverResponseByError(ResponseCode.ERROR,"购物车中无商品");
+            }
+            return ServerResponse.serverResponseBySuccess(cartVO,"购物车无未选中商品");
+        }
+        return ServerResponse.serverResponseBySuccess(cartVO);
+    }
+
     private CartVO getCartVO(Integer userId){
         CartVO cartVO = new CartVO();
         // 根据userId查询用户的购物信息

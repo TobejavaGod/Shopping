@@ -60,7 +60,7 @@ public class CartController {
     /**
      * 移除购物车中某些商品
      */
-    @RequestMapping("delete_product.do")
+    @RequestMapping("/delete_product.do")
     public ServerResponse delete_product(String productIds){
 
         return cartService.delete_product(productIds);
@@ -75,9 +75,39 @@ public class CartController {
         return cartService.select_product(productId,user.getId());
     }
 
+    /**
+     * 购物车取消选中某商品
+     * @param productId
+     * @param session
+     * @return
+     */
     @RequestMapping("/un_select.do")
     public ServerResponse un_select_product(@RequestParam("productId") Integer productId, HttpSession session){
         User user = (User)session.getAttribute(Const.CURRENT_USER);
         return cartService.unSelect_product(productId,user.getId());
+    }
+
+    /**
+     * 购物车全选
+     */
+    @RequestMapping("/select_all.do")
+    public ServerResponse select_all(HttpSession session){
+        User user = (User)session.getAttribute(Const.CURRENT_USER);
+        if(user==null){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"未登陆");
+        }
+        return cartService.select_allProduct(user.getId());
+    }
+
+    /**
+     * 购物车取消全选
+     */
+    @RequestMapping("/un_select_all.do")
+    public ServerResponse un_select_all(HttpSession session){
+        User user = (User)session.getAttribute(Const.CURRENT_USER);
+        if(user==null){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"未登陆");
+        }
+        return cartService.select_noneProduct(user.getId());
     }
 }

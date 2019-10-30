@@ -60,4 +60,26 @@ public interface OrderMapper {
      * @return
      */
     int updateOrderStatusAndPaymentTimeByOrderNo(@Param("order") Order order);
+
+    /**
+     * 修改订单状态
+     * @param orderNo
+     * @return
+     */
+    int updateOrderByOrderNo(@Param("orderNo") Long orderNo);
+
+    /**
+     * 订单列表
+     * @param userId
+     * @return
+     */
+    List<Order> findOrderByUserId(@Param("userId") Integer userId);
+
+
+    /**
+     * 发货
+     * @param orderNo
+     * @return
+     */
+    int updateOrderStatusAndSendTimeByOrderNo(@Param("orderNo") Long orderNo);
 }

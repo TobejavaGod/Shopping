@@ -16,4 +16,25 @@ public interface IShippingService {
     ServerResponse add(Shipping shipping);
 
     ServerResponse findShippingById(Integer shippingId);
+
+    /**
+     * 删除地址
+     * @param shippingId
+     * @return
+     */
+    ServerResponse delete(Integer shippingId);
+
+
+    /**
+     * 查看某地址
+     * @param shippingId
+     * @return
+     */
+    ServerResponse selectShipping(Integer shippingId);
+
+
+    /**
+     * 地址列表
+     */
+    ServerResponse listAllShipping(Integer pageNum,Integer pageSize,Integer userId);
 }

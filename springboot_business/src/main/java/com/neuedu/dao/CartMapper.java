@@ -98,4 +98,19 @@ public interface CartMapper {
      * @return
      */
     int unSelectProduct(@Param("productId") Integer productId,@Param("userId") Integer userId);
+
+    /**
+     * 全选
+     * @param userId
+     * @return
+     */
+    int selectAllProduct(@Param("userId") Integer userId);
+
+    /**
+     * 取消全选
+     * @param userId
+     * @return
+     */
+    int selectNoneProduct(@Param("userId") Integer userId);
+
 }

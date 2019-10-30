@@ -65,4 +65,18 @@ public interface ICartService {
      * @return
      */
     ServerResponse unSelect_product(Integer productId,Integer userId);
+
+    /**
+     * 购物车全选
+     * @param userId
+     * @return
+     */
+    ServerResponse select_allProduct(Integer userId);
+
+    /**
+     * 购物车取消全选
+     * @param userId
+     * @return
+     */
+    ServerResponse select_noneProduct(Integer userId);
 }

@@ -4,6 +4,7 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.demo.trade.config.Configs;
 import com.google.common.collect.Maps;
+import com.neuedu.common.ResponseCode;
 import com.neuedu.common.ServerResponse;
 import com.neuedu.pojo.User;
 import com.neuedu.service.IOrderService;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +44,40 @@ public class OrderController {
 
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         return orderService.createOrder(shippingId,user.getId());
+    }
+
+    /**
+     * 取消订单
+     */
+    @RequestMapping("/cancel/{orderNo}")
+    public ServerResponse cancelOrder(@PathVariable("orderNo") Long orderNo){
+
+        return orderService.cancelOrder(orderNo);
+    }
+
+    /**
+     * 获取订单商品信息
+     * @param session
+     * @return
+     */
+    @RequestMapping("/get_order_cart_product.do")
+    public ServerResponse get_order_product(HttpSession session){
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if(user==null){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"未登录");
+        }
+        return orderService.get_order_product(user.getId());
+    }
+
+    @RequestMapping("/list.do")
+    public ServerResponse listOrders(@RequestParam(value = "pageNum",defaultValue = "1") Integer pageNum,
+                                     @RequestParam(value = "pageSize",defaultValue = "10")Integer pageSize,
+                                     HttpSession session){
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if(user==null){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"未登录");
+        }
+        return orderService.listOrders(pageNum,pageSize,user.getId());
     }
 
     /**

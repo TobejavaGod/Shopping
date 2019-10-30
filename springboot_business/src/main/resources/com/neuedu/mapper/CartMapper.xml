@@ -84,6 +84,23 @@
     and product_id=#{productId}
   </update>
 
+  <!-- 全选 -->
+  <update id="selectAllProduct" parameterType="int">
+    update neuedu_cart
+    set
+    checked=1,
+    update_time = now()
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+
+  <!-- 取消全选 -->
+  <update id="selectNoneProduct" parameterType="int">
+    update neuedu_cart
+    set
+    checked=0,
+    update_time = now()
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     <!--
