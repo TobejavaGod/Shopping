@@ -292,6 +292,27 @@ public class OrderServiceImpl implements IOrderService {
         return ServerResponse.serverResponseBySuccess("发货成功");
     }
 
+    /**
+     * 订单详情
+     * @param orderNo
+     * @return
+     */
+    @Override
+    public ServerResponse order_detail(Integer userId,Long orderNo) {
+        if(orderNo==null){
+            return ServerResponse.serverResponseByError(ResponseCode.PARAM_NOT_NULL,"订单号不能为空");
+        }
+        Order order = orderMapper.findOrderByOrderNo(orderNo);
+        if(order==null){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"订单不存在");
+        }
+        if(order.getUserId()!=userId){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"只能查询自己的订单");
+        }
+        List<OrderItem> orderItemList = orderItemMapper.findOrderItemByOrderNo(orderNo);
+        return assembleOrderVO(order, orderItemList, order.getShippingId());
+    }
+
 
     //OrderVO
     private ServerResponse assembleOrderVO(Order order, List<OrderItem> orderItemList, Integer shippingId){

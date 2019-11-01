@@ -50,4 +50,12 @@ public interface IOrderService {
      * @return
      */
     ServerResponse send_product(Long orderNo);
+
+    /**
+     * 查询订单详情
+     * @param orderNo
+     * @param userId 前台查询订单详情只能查询自己的
+     * @return
+     */
+    ServerResponse order_detail(Integer userId,Long orderNo);
 }

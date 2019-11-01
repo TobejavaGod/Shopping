@@ -69,6 +69,13 @@ public class OrderController {
         return orderService.get_order_product(user.getId());
     }
 
+    /**
+     * 订单列表
+     * @param pageNum
+     * @param pageSize
+     * @param session
+     * @return
+     */
     @RequestMapping("/list.do")
     public ServerResponse listOrders(@RequestParam(value = "pageNum",defaultValue = "1") Integer pageNum,
                                      @RequestParam(value = "pageSize",defaultValue = "10")Integer pageSize,
@@ -78,6 +85,18 @@ public class OrderController {
             return ServerResponse.serverResponseByError(ResponseCode.ERROR,"未登录");
         }
         return orderService.listOrders(pageNum,pageSize,user.getId());
+    }
+
+    /**
+     * 订单详情
+     */
+    @RequestMapping("/detail/{orderNo}")
+    public ServerResponse detail(@PathVariable("orderNo") Long orderNo,HttpSession session){
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if(user==null){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"未登录");
+        }
+        return orderService.order_detail(user.getId(),orderNo);
     }
 
     /**
