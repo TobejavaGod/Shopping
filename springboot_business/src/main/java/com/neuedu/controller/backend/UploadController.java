@@ -41,7 +41,7 @@ public class UploadController {
         // 生成新的文件名
         String newFileName = UUID.randomUUID().toString()+extendName;
         // 创建上传文件的目录
-        File mkdir = new File("D:/upload");
+        File mkdir = new File("/usr/thundersoft/developer/upload");
         if(!mkdir.exists()){
             // 如果文件夹不存在就创建一个文件夹
             mkdir.mkdirs();

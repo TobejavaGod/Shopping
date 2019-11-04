@@ -17,7 +17,6 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
-import com.neuedu.alipay.Main;
 import com.neuedu.common.*;
 import com.neuedu.dao.OrderItemMapper;
 import com.neuedu.dao.OrderMapper;
@@ -72,7 +71,7 @@ public class OrderServiceImpl implements IOrderService {
     private String imageHost;
 
 
-    private static Log log = LogFactory.getLog(Main.class);
+    private static Log log = LogFactory.getLog(OrderServiceImpl.class);
 
     // 支付宝当面付2.0服务
     private static AlipayTradeService tradeService;
@@ -570,7 +569,7 @@ public class OrderServiceImpl implements IOrderService {
                 dumpResponse(response);
 
                 // 需要修改为运行机器上的路径
-                String filePath = String.format("D:/upload/qr-%s.png",
+                String filePath = String.format("/usr/thundersoft/developer/upload/qr-%s.png",
                         response.getOutTradeNo());
                 log.info("filePath:" + filePath);
                 ZxingUtils.getQRCodeImge(response.getQrCode(), 256, filePath);

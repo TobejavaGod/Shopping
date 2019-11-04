@@ -148,9 +148,26 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.9.10.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.alipay.api</groupId>
+            <artifactId>apipay-sdk-java</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/libs/alipay-sdk-java-3.3.0.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alipay.demo.trade</groupId>
+            <artifactId>apipay-trade-sdk</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/libs/alipay-trade-sdk-20161215.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>
+        <finalName>shopping</finalName>
         <plugins>
             <plugin>
                 <groupId>org.mybatis.generator</groupId>
@@ -161,6 +178,7 @@
                     <overwrite>true</overwrite>
                 </configuration>
             </plugin>
+            <!--springboot项目打包插件-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -171,14 +189,16 @@
 
             <!--maven的核心插件之-complier插件默认只支持编译Java 1.4，因此需要加上支持高版本jre的配置，在pom.xml里面加上 增加编译插件 -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
                     <encoding>UTF-8</encoding>
                     <compilerArguments>
-                        <extdirs>${project.basedir}/src/main/resource/libs</extdirs>
+                        <extdirs>${project.basedir}/src/main/resources/libs</extdirs>
+                        <!--  rt包没有打到项目中去 -->
+                        <verbose />
+                        <bootclasspath>C:/Program Files/Java/jdk1.8.0_121/jre/lib/rt.jar;C:/Program Files/Java/jdk1.8.0_121/jre/lib/jce.jar;C:/Program Files/Java/jdk1.8.0_121/jre/lib/jsse.jar</bootclasspath>
                     </compilerArguments>
                 </configuration>
             </plugin>
