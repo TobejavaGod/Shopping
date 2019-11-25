@@ -3,14 +3,6 @@ server:
   servlet:
     context-path: /
 
-
-limit:
-  minMoney: 2
-  maxMoney: 100
-  desc: 最低${limit.minMoney}最高${limit.maxMoney}
-
-
-
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -53,9 +45,9 @@ redis:
   test:
     borrow: true
     return: true
-  ip: 47.95.119.164
+  ip: 39.97.255.20
   port: 5379
-  password: Qinfo20180507@
+  password: Jywxjtx1314..
   timeout: 2000
 
 # redis.conf 1.port 2.bind 0.0.0.0 3.requirepass newpassword

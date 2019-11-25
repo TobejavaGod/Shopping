@@ -8,6 +8,7 @@ import com.neuedu.pojo.User;
 import com.neuedu.service.ICategoryService;
 import com.neuedu.util.Const;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpSession;
  */
 @RestController
 @RequestMapping("/manager/category")
+@CrossOrigin(value = "http://localhost:8080")
 public class CategoryController {
 
     @Autowired
@@ -29,16 +31,7 @@ public class CategoryController {
      * @return
      */
     @RequestMapping("/add_category.do")
-    public ServerResponse addCategory(Category category,HttpSession session){
-        User user = (User)session.getAttribute(Const.CURRENT_USER);
-        if(user==null){
-            return ServerResponse.serverResponseByError(ResponseCode.NOT_LOGIN,"未登录");
-        }
-        int role = user.getRole();
-        if(role== RoleEnum.ROLE_USER.getRole()){
-            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"权限不足");
-
-        }
+    public ServerResponse addCategory(Category category){
         return categoryService.addCategory(category);
     }
 
@@ -51,16 +44,7 @@ public class CategoryController {
      * @return
      */
     @RequestMapping("/set_category_name.do")
-    public ServerResponse updateCategory(Category category,HttpSession session){
-        User user = (User)session.getAttribute(Const.CURRENT_USER);
-        if(user==null){
-            return ServerResponse.serverResponseByError(ResponseCode.NOT_LOGIN,"未登录");
-        }
-        int role = user.getRole();
-        if(role== RoleEnum.ROLE_USER.getRole()){
-            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"权限不足");
-
-        }
+    public ServerResponse updateCategory(Category category){
         return categoryService.updateCategory(category);
     }
 
@@ -70,16 +54,7 @@ public class CategoryController {
      * @return
      */
     @RequestMapping("/{categoryId}")
-    public ServerResponse getCategoryById(@PathVariable("categoryId") Integer categoryId,HttpSession session){
-        User user = (User)session.getAttribute(Const.CURRENT_USER);
-        if(user==null){
-            return ServerResponse.serverResponseByError(ResponseCode.NOT_LOGIN,"未登录");
-        }
-        int role = user.getRole();
-        if(role== RoleEnum.ROLE_USER.getRole()){
-            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"权限不足");
-
-        }
+    public ServerResponse getCategoryById(@PathVariable("categoryId") Integer categoryId){
         return categoryService.getCategoryById(categoryId);
     }
 
@@ -89,15 +64,7 @@ public class CategoryController {
      * @return
      */
     @RequestMapping("/deep/{categoryId}")
-    public ServerResponse deepCategory(@PathVariable("categoryId") Integer categoryId,HttpSession session){
-        User user = (User)session.getAttribute(Const.CURRENT_USER);
-        if(user==null){
-            return ServerResponse.serverResponseByError(ResponseCode.NOT_LOGIN,"未登录");
-        }
-        int role = user.getRole();
-        if(role== RoleEnum.ROLE_USER.getRole()){
-            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"权限不足");
-        }
+    public ServerResponse deepCategory(@PathVariable("categoryId") Integer categoryId){
         return categoryService.deepCategory(categoryId);
     }
 }

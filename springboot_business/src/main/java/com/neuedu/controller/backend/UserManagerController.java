@@ -7,10 +7,7 @@ import com.neuedu.pojo.User;
 import com.neuedu.service.IUserService;
 import com.neuedu.util.Const;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 
@@ -21,6 +18,7 @@ import javax.servlet.http.HttpSession;
  */
 @RestController
 @RequestMapping("/manager")
+@CrossOrigin(value = "http://localhost:8080")
 public class UserManagerController {
 
     @Autowired
@@ -38,7 +36,7 @@ public class UserManagerController {
         return serverResponse;
     }
 
-    @RequestMapping("user/list.do")
+    @RequestMapping("/user/list.do")
     public ServerResponse listUsers(@RequestParam(value = "pageSize",defaultValue = "10") Integer pageSize,
                                     @RequestParam(value = "pageNum",defaultValue = "1") Integer pageNum,
                                     HttpSession session){

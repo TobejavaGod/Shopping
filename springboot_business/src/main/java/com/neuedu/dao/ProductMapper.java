@@ -86,4 +86,10 @@ public interface ProductMapper {
      * @return
      */
     List<Product> findProductsByCategoryForUser(@Param("categoryId") Integer categoryId,@Param("orderBy") String orderBy);
+
+    List<Product> findHotProduct();
+
+    int findProductAmount(@Param("categoryId") Integer categoryId);
+
+    int findProductAmountBuName(@Param("productName") String productName);
 }

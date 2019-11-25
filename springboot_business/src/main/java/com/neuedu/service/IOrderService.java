@@ -58,4 +58,11 @@ public interface IOrderService {
      * @return
      */
     ServerResponse order_detail(Integer userId,Long orderNo);
+
+
+    /**
+     * 列出所有订单
+     * @return
+     */
+    ServerResponse listAllOrders();
 }

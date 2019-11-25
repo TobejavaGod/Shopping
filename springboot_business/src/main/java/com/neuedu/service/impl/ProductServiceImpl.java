@@ -208,6 +208,48 @@ public class ProductServiceImpl implements IProductService {
         return ServerResponse.serverResponseBySuccess(pageInfo);
     }
 
+    /**
+     * 获取热门商品
+     * @return
+     */
+    @Override
+    public ServerResponse getHotPro() {
+        List<Product> hotProduct = productMapper.findHotProduct();
+        if(hotProduct==null||hotProduct.size()==0){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"查询失败");
+        }
+        List<ProductListVO> productListVOList = Lists.newArrayList();
+        for (Product product:hotProduct){
+            ProductListVO productListVO = assembleProductListVO(product);
+            productListVOList.add(productListVO);
+        }
+        return ServerResponse.serverResponseBySuccess(productListVOList);
+    }
+
+    @Override
+    public ServerResponse findProductAmount(Integer categoryId) {
+        if(categoryId==null){
+            return ServerResponse.serverResponseByError(ResponseCode.PARAM_NOT_NULL,"参数不能为空");
+        }
+        int amount = productMapper.findProductAmount(categoryId);
+        if(amount<=0){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"未查询到商品");
+        }
+        return ServerResponse.serverResponseBySuccess(amount);
+    }
+
+    @Override
+    public ServerResponse findProductAmountByName(String productName) {
+        if(productName==null){
+            return ServerResponse.serverResponseByError(ResponseCode.PARAM_NOT_NULL,"参数不能为空");
+        }
+        int amount = productMapper.findProductAmountBuName("%" + productName + "%");
+        if(amount<=0){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"未查询到商品");
+        }
+        return ServerResponse.serverResponseBySuccess(amount);
+    }
+
 
     /**
      * 将product的pojo转为vo
@@ -223,6 +265,7 @@ public class ProductServiceImpl implements IProductService {
         productListVO.setPrice(product.getPrice());
         productListVO.setStatus(product.getStatus());
         productListVO.setSubtitle(product.getSubtitle());
+        productListVO.setStock(product.getStock());
 
 
         return  productListVO;

@@ -18,6 +18,7 @@ import java.util.UUID;
  */
 @Controller
 @RequestMapping("/manager")
+@CrossOrigin(value = "http://localhost:8080")
 public class UploadController {
 
     @Value("${business.imageHost}")

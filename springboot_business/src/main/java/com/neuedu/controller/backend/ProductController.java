@@ -8,10 +8,7 @@ import com.neuedu.pojo.User;
 import com.neuedu.service.IProductService;
 import com.neuedu.util.Const;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 
@@ -22,6 +19,7 @@ import javax.servlet.http.HttpSession;
  */
 @RestController
 @RequestMapping("/manager/product")
+@CrossOrigin(value = "http://localhost:8080")
 public class ProductController {
 
     @Autowired
@@ -30,15 +28,7 @@ public class ProductController {
      * 商品添加&更新
      */
     @RequestMapping("/save.do")
-    public ServerResponse addOrUpdate(Product product, HttpSession session){
-        User user = (User)session.getAttribute(Const.CURRENT_USER);
-        if(user==null){
-            return ServerResponse.serverResponseByError(ResponseCode.NOT_LOGIN,"未登录");
-        }
-        int role = user.getRole();
-        if(role== RoleEnum.ROLE_USER.getRole()){
-            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"权限不足");
-        }
+    public ServerResponse addOrUpdate(Product product){
         return productService.addOrUpdate(product);
     }
 
@@ -61,7 +51,7 @@ public class ProductController {
         return productService.set_sale_status(productId, status);
     }
 
-    @RequestMapping("search.do")
+    @RequestMapping("/search.do")
     public ServerResponse search(@RequestParam(value = "productName",required = false)String productName,
                                  @RequestParam(value = "productId",required = false)Integer productId,
                                  @RequestParam(value = "pageNum",defaultValue = "1")Integer pageNum,
@@ -91,6 +81,4 @@ public class ProductController {
         }
         return productService.detail(productId);
     }
-
-
 }

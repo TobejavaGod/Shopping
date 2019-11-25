@@ -77,4 +77,10 @@ public interface IProductService {
      * @return
      */
     ServerResponse listProductsForUser(Integer categoryId,Integer pageNum,Integer pageSize,String orderBy);
+
+    ServerResponse getHotPro();
+
+    ServerResponse findProductAmount(Integer categoryId);
+
+    ServerResponse findProductAmountByName(String productName);
 };

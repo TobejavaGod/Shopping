@@ -13,8 +13,17 @@ public class ProductListVO {
     private String  name;//
     private String  subtitle;
     private Integer status;
+    private Integer stock;
     private String  mainImage;
     private BigDecimal price;
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
 
     public Integer getId() {
         return id;

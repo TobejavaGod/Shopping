@@ -35,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ import java.util.Random;
  * @date 2019/10/28-10:53
  */
 @Service
+
 public class OrderServiceImpl implements IOrderService {
 
     @Autowired
@@ -108,6 +110,7 @@ public class OrderServiceImpl implements IOrderService {
      * @param userId
      * @return
      */
+    @Transactional
     @Override
     public ServerResponse createOrder(Integer shippingId, Integer userId) {
         // 参数非空校验
@@ -312,6 +315,22 @@ public class OrderServiceImpl implements IOrderService {
         return assembleOrderVO(order, orderItemList, order.getShippingId());
     }
 
+    @Override
+    public ServerResponse listAllOrders() {
+        List<Order> orders = orderMapper.selectAll();
+        if(orders==null||orders.size()<=0){
+            return ServerResponse.serverResponseByError(ResponseCode.ERROR,"无订单信息");
+        }
+        List<OrderVO> orderVOList = Lists.newArrayList();
+        for (Order order : orders){
+            List<OrderItem> orderItemList = orderItemMapper.findOrderItemByOrderNo(order.getOrderNo());
+            ServerResponse<OrderVO> serverResponse = assembleOrderVO(order, orderItemList, order.getShippingId());
+            OrderVO orderVO = serverResponse.getData();
+            orderVOList.add(orderVO);
+        }
+        return ServerResponse.serverResponseBySuccess(orderVOList);
+    }
+
 
     //OrderVO
     private ServerResponse assembleOrderVO(Order order, List<OrderItem> orderItemList, Integer shippingId){
@@ -480,6 +499,7 @@ public class OrderServiceImpl implements IOrderService {
 
             orderItemVO.setQuantity(orderItem.getQuantity());
             orderItemVO.setCreateTime(DateUtils.dateToStr(orderItem.getCreateTime()));
+            System.out.println(orderItem.getCreateTime());
             orderItemVO.setCurrentUnitPrice(orderItem.getCurrentUnitPrice());
             orderItemVO.setOrderNo(orderItem.getOrderNo());
             orderItemVO.setProductId(orderItem.getProductId());
@@ -501,7 +521,7 @@ public class OrderServiceImpl implements IOrderService {
         String outTradeNo = String.valueOf(order.getOrderNo());
 
         // (必填) 订单标题，粗略描述用户的支付目的。如“xxx品牌xxx门店当面付扫码消费”
-        String subject = "【乐购】当面付扫码消费";
+        String subject = "【悦商城】当面付扫码消费";
 
         // (必填) 订单总金额，单位为元，不能超过1亿元
         // 如果同时传入了【打折金额】,【不可打折金额】,【订单总金额】三者,则必须满足如下条件:【订单总金额】=【打折金额】+【不可打折金额】
@@ -557,7 +577,7 @@ public class OrderServiceImpl implements IOrderService {
                 .setOperatorId(operatorId).setStoreId(storeId).setExtendParams(extendParams)
                 .setTimeoutExpress(timeoutExpress)
                 //支付宝服务器主动通知商户服务器里指定的页面http路径,根据需要设置
-                .setNotifyUrl("http://zvzkyc.natappfree.cc/order/callback.do")
+                .setNotifyUrl("http://39.97.255.20:8888/order/callback.do")
                 .setGoodsDetailList(goodsDetailList);
 
         AlipayF2FPrecreateResult result = tradeService.tradePrecreate(builder);

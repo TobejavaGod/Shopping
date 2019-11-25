@@ -14,7 +14,7 @@ import java.util.Date;
  */
 public class DateUtils {
 
-    private static final String FORMAT_DEFAULT = "yyyy-MM-dd HH:mm:ss";
+    static final String FORMAT_DEFAULT = "yyyy-MM-dd HH:mm:ss";
     /**
      * 将字符串日期转为date
      * @param dateTimeStr 要转换的字符串

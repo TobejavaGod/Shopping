@@ -4,4 +4,4 @@ spring:
 
 
 business:
-  imageHost: http://img.neuedu.com/
+  imageHost: http://39.97.255.20/
